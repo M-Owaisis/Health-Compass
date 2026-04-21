@@ -1,0 +1,68 @@
+services:
+  # MongoDB Database (runs purely inside docker!)
+  mongodb:
+    image: mongo:6.0
+    container_name: healthcompass_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  # The Python ML Service for AI predictions
+  healthcompass-ml:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.python
+    container_name: healthcompass_ml
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+    restart: unless-stopped
+
+  # The Node.js Express Backend
+  healthcompass-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: healthcompass_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      # Point to the local docker mongo service
+      - MONGO_URI=mongodb://mongodb:27017/healthcompass
+      # Add a default dummy JWT token if not specified
+      - JWT_SECRET=my_super_secret_health_compass_jwt_key
+      - JWT_EXPIRE=30d
+      - ML_SERVICE_URL=http://healthcompass_ml:5001
+      # IMPORTANT: PASTE YOUR ASSESSMENT ENGINE KEY HERE
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    env_file:
+      - ./backend/config.env
+    depends_on:
+      - mongodb
+      - healthcompass-ml
+    restart: unless-stopped
+
+  # The React.js Frontend
+  healthcompass-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: healthcompass_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - WDS_SOCKET_PORT=0
+      - CHOKIDAR_USEPOLLING=true
+      - DISABLE_ESLINT_PLUGIN=true
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - healthcompass-backend
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
