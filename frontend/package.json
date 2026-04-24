@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.378.0",
@@ -19,9 +20,7 @@
     "react-scripts": "5.0.1",
     "recharts": "^3.8.1"
   },
-  "devDependencies": {
-    "eslint-plugin-react-hooks": "^4.6.2"
-  },
+  "devDependencies": {},
   "browserslist": {
     "production": [
       ">0.2%",

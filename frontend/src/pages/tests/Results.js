@@ -567,7 +567,7 @@ function Results({ user, onLogout, refreshUser }) {
     };
 
     saveAssessment();
-  }, [mocaScore]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mocaScore]); 
 
   const handleRetakeTest = () => {
     const metadata = JSON.parse(localStorage.getItem('healthCompassMetadata') || '{}');

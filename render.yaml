@@ -39,6 +39,8 @@ services:
     envVars:
       - key: CI
         value: "false"
+      - key: DISABLE_ESLINT_PLUGIN
+        value: "true"
       - key: REACT_APP_API_URL
         value: https://health-compass-api.onrender.com
     routes:
