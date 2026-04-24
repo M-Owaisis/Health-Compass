@@ -353,7 +353,7 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
     setTestError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/ai/generate-tests', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/ai/generate-tests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -388,7 +388,7 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/support/contact', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/support/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

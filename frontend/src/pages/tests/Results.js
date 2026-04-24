@@ -457,7 +457,7 @@ function Results({ user, onLogout, refreshUser }) {
       const interpretation = mocaScore.interpretation;
       const severity = mocaScore.severity;
 
-      const response = await fetch('http://localhost:5000/api/assessment/save-result', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/assessment/save-result`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -532,7 +532,7 @@ function Results({ user, onLogout, refreshUser }) {
           return obj;
         }, {});
 
-        const res = await fetch('http://localhost:5000/api/assessment/save-result', {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/assessment/save-result`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({

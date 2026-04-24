@@ -494,7 +494,7 @@ function ClinicalRiskAssessment({ user, onLogout }) {
         };
 
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/assessment/classify-risk', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/assessment/classify-risk`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
           body: JSON.stringify(assessmentData),

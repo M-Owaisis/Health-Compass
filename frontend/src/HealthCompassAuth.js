@@ -612,7 +612,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
     e.preventDefault();
     setLoading(true); setError(''); setSuccess('');
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -633,7 +633,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
       if (!idToken && !accessToken) { setError('Google sign-in failed to return a token'); return; }
       setLoading(true);
       const body = idToken ? { idToken } : { accessToken };
-      const res = await fetch('http://localhost:5000/api/auth/google', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/auth/google`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       const data = await res.json();
@@ -650,7 +650,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
     e.preventDefault();
     setLoading(true); setError(''); setSuccess('');
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/auth/register`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
@@ -673,7 +673,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
     setLoading(true); setError(''); setSuccess('');
     try {
       const endpoint = flow === 'verify' ? '/api/auth/verify-email' : '/api/auth/verify-reset';
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}${endpoint}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code }),
       });
@@ -681,7 +681,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
       if (data.success) {
         if (flow === 'verify') {
           try {
-            const loginRes = await fetch('http://localhost:5000/api/auth/login', {
+            const loginRes = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/auth/login`, {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password }),
             });
@@ -704,7 +704,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
     setLoading(true); setError(''); setSuccess('');
     try {
       const endpoint = flow === 'verify' ? '/api/auth/resend-verification' : '/api/auth/resend-reset';
-      const response = await fetch(`http://localhost:5000/api/auth${endpoint}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth${endpoint}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }),
       });
       const data = await response.json();
@@ -719,7 +719,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
     if (newPassword1.length < 6) { setError('Password must be at least 6 characters'); return; }
     setLoading(true); setError(''); setSuccess('');
     try {
-      const response = await fetch('http://localhost:5000/api/auth/reset-password', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/auth/reset-password`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code: verifiedOtp, newPassword: newPassword1 }),
       });
@@ -739,7 +739,7 @@ const HealthCompassAuth = ({ onLogin, initialView = 'login' }) => {
   const handleSendResetOTP = async () => {
     setLoading(true); setError('');
     try {
-      const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/auth/forgot-password`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }),
       });
       const data = await response.json();

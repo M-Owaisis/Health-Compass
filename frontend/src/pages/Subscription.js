@@ -192,7 +192,7 @@ export default function Subscription({ user, onLogout, refreshUser }) {
     const fetchStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:5000/api/subscription/status', {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/subscription/status`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -209,7 +209,7 @@ export default function Subscription({ user, onLogout, refreshUser }) {
     
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/subscription/upgrade', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/subscription/upgrade`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ plan: selectedPlan.id })

@@ -198,7 +198,7 @@ export default function History({ user, onLogout }) {
     const fetchHistory = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:5000/api/assessment/history', {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || `${process.env.REACT_APP_API_URL || "http://localhost:5000"}`}/api/assessment/history`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
