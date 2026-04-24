@@ -167,7 +167,7 @@ export const TEST_STYLES = `
     background: var(--navy); color: var(--white);
     padding: 0.5rem 1.2rem; border-radius: 12px;
     font-size: 0.85rem; font-weight: 700;
-    box-shadow: 0 8px 20px rgba(28,43,58,0.2);
+    box-shadow: 0 8px 20px rgba(28, 43, 58, 0.2);
   }
   .tp-q-text {
     font-family: var(--font-serif);
@@ -293,4 +293,4 @@ export const TEST_STYLES = `
     .tp-progress-step span { display: none; }
     .tp-progress-step::after { content: attr(data-index); }
   }
-\`;
+`;
