@@ -13,7 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.NODE_ENV === 'production' ? ['https://your-frontend-domain.com'] : ['http://localhost:3000'],
+    origin: process.env.NODE_ENV === 'production' ? [process.env.FRONTEND_URL || 'https://health-compass-frontend.onrender.com'] : ['http://localhost:3000', 'http://localhost:5002'],
     credentials: true,
   })
 );
