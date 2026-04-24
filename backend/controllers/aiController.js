@@ -1,4 +1,50 @@
 const fetch = require('node-fetch');
+const Groq = require('groq-sdk');
+
+async function fetchAssessmentLlmText(prompt, maxOutputTokens) {
+  if (process.env.GROQ_API_KEY) {
+    try {
+      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+      const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+      const completion = await groq.chat.completions.create({
+        model,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: maxOutputTokens,
+      });
+      return completion.choices[0]?.message?.content || null;
+    } catch (err) {
+      console.error('Groq API Error:', err);
+      return null;
+    }
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.9,
+            maxOutputTokens: maxOutputTokens,
+          }
+        }),
+      }
+    );
+    const data = await response.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+  } catch (err) {
+    console.error('Gemini API Error:', err);
+    return null;
+  }
+}
 
 // MoCA/MMSE Standard Domain Specifications
 const COGNITIVE_DOMAINS = {
@@ -367,8 +413,7 @@ exports.generateTests = async (req, res) => {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GROQ_API_KEY && !process.env.GEMINI_API_KEY) {
       return res.status(500).json({ success: false, message: 'Assessment engine not configured.' });
     }
 
@@ -408,26 +453,7 @@ exports.generateTests = async (req, res) => {
     }
 
     const prompt = buildPrompt(profile);
-    
-    // Use Gemini 3.1 Flash Lite Preview (free tier)
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            topP: 0.9,
-            maxOutputTokens: 8192,
-          }
-        }),
-      }
-    );
-
-    const data = await response.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = await fetchAssessmentLlmText(prompt, 8192);
 
     if (!text) {
       return res.status(500).json({ success: false, message: 'Assessment engine failed to respond.' });
@@ -513,8 +539,7 @@ exports.generateAdaptiveQuestion = async (req, res) => {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GROQ_API_KEY && !process.env.GEMINI_API_KEY) {
       return res.status(500).json({ success: false, message: 'Assessment engine not configured.' });
     }
 
@@ -530,28 +555,9 @@ exports.generateAdaptiveQuestion = async (req, res) => {
       targetDifficulty
     });
 
-    // Use Gemini 3.1 Flash Lite Preview (free tier)
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.8,
-            topP: 0.95,
-            maxOutputTokens: 1024,
-          }
-        }),
-      }
-    );
-
-    const data = await response.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = await fetchAssessmentLlmText(prompt, 1024);
 
     if (!text) {
-      console.error('Gemini response:', JSON.stringify(data, null, 2));
       return res.status(500).json({ success: false, message: 'No response from AI.' });
     }
 
