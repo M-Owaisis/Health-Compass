@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { Home, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Home as HomeIcon, ArrowLeft, ArrowRight } from 'lucide-react';
+import TestProgress from '../../components/TestProgress';
 import { TEST_STYLES } from './testStyles';
 
 function FunctionalTest({ user, onLogout }) {
@@ -24,6 +25,10 @@ function FunctionalTest({ user, onLogout }) {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('healthCompassAnswers') || '{}');
     stored.functional = answers;
     localStorage.setItem('healthCompassAnswers', JSON.stringify(stored));
@@ -42,9 +47,10 @@ function FunctionalTest({ user, onLogout }) {
       <Navbar user={user} onLogout={onLogout} />
 
       <main className="tp-main">
+        <TestProgress currentStep={4} />
         <div className="tp-hero">
           <div>
-            <div className="tp-hero-badge"><Home size={10} /> Functional Skills</div>
+            <div className="tp-hero-badge"><HomeIcon size={10} /> Functional Skills</div>
             <h1 className="tp-hero-title">{test?.title || 'Functional Skills Test'}</h1>
             <p className="tp-hero-desc">
               This section connects cognitive changes to real-world daily tasks using an IADL style assessment.
@@ -106,12 +112,7 @@ function FunctionalTest({ user, onLogout }) {
                 )}
               </div>
             ))}
-            <div className="tp-actions" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-              {!isAllAnswered && (
-                <div style={{ color: '#B91C1C', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: 500 }}>
-                  * Please answer all questions to proceed.
-                </div>
-              )}
+            <div className="tp-actions">
               <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
                 <button className="tp-btn-secondary" onClick={() => navigate('/tests/language')}>
                   <ArrowLeft size={16} /> Back

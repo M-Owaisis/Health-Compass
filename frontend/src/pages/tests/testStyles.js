@@ -246,4 +246,51 @@ export const TEST_STYLES = `
   .tp-btn-secondary:hover { background: var(--cream); border-color: rgba(28,43,58,0.3); }
 
   @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-`;
+
+  /* ── Progress Bar ── */
+  .tp-progress-container {
+    width: 100%;
+    margin-bottom: 3.5rem;
+    position: relative;
+    animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s backwards;
+  }
+  .tp-progress-track {
+    width: 100%;
+    height: 8px;
+    background: var(--sage-pale);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .tp-progress-fill {
+    height: 100%;
+    background: var(--sage);
+    transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .tp-progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.2rem;
+  }
+  .tp-progress-step {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.4;
+    transition: all 0.4s;
+    position: relative;
+  }
+  .tp-progress-step.active {
+    color: var(--sage);
+    opacity: 1;
+  }
+  .tp-progress-step.completed {
+    color: var(--navy);
+    opacity: 0.8;
+  }
+  @media (max-width: 600px) {
+    .tp-progress-step span { display: none; }
+    .tp-progress-step::after { content: attr(data-index); }
+  }
+\`;

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { Zap, ArrowLeft, ArrowRight } from 'lucide-react';
+import TestProgress from '../../components/TestProgress';
 import { TEST_STYLES } from './testStyles';
 
 function ExecutiveTest({ user, onLogout }) {
@@ -24,6 +25,10 @@ function ExecutiveTest({ user, onLogout }) {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('healthCompassAnswers') || '{}');
     stored.executive = answers;
     localStorage.setItem('healthCompassAnswers', JSON.stringify(stored));
@@ -42,6 +47,8 @@ function ExecutiveTest({ user, onLogout }) {
       <Navbar user={user} onLogout={onLogout} />
 
       <main className="tp-main">
+        <TestProgress currentStep={2} />
+
         {/* ── Hero ── */}
         <div className="tp-hero">
           <div>
@@ -123,12 +130,7 @@ function ExecutiveTest({ user, onLogout }) {
               </div>
             ))}
 
-            <div className="tp-actions" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-              {!isAllAnswered && (
-                <div style={{ color: '#B91C1C', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: 500 }}>
-                  * Please answer all questions to proceed.
-                </div>
-              )}
+            <div className="tp-actions">
               <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
                 <button className="tp-btn-secondary" onClick={() => navigate('/tests/episodic-memory')}>
                   <ArrowLeft size={16} /> Back
