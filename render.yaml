@@ -34,7 +34,7 @@ services:
     name: health-compass-frontend
     env: static
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: yarn install && CI=false yarn build
     staticPublishPath: frontend/build
     envVars:
       - key: REACT_APP_API_URL
