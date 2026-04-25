@@ -87,63 +87,73 @@ const welcomeEmailTemplate = (name) => `
     <title>Welcome to HealthCompass</title>
       <style>
           body {
-              font-family: Arial, sans-serif;
+              font-family: "Segoe UI", Arial, sans-serif;
               margin: 0;
               padding: 0;
-              background-color: #f4f4f4;
-              color: #333;
+              background: #f3f7fb;
+              color: #1f2937;
           }
           .container {
               max-width: 600px;
               margin: 30px auto;
               background: #ffffff;
-              border-radius: 8px;
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+              border-radius: 12px;
+              box-shadow: 0 8px 30px rgba(13, 34, 66, 0.12);
               overflow: hidden;
-              border: 1px solid #ddd;
+              border: 1px solid #dbe7f5;
           }
           .header {
-              background-color: #4CAF50;
+              background: linear-gradient(135deg, #0f766e, #2563eb);
               color: white;
-              padding: 20px;
+              padding: 24px 20px;
               text-align: center;
-              font-size: 26px;
+              font-size: 28px;
               font-weight: bold;
+              letter-spacing: 0.2px;
           }
           .content {
-              padding: 25px;
+              padding: 28px;
               line-height: 1.8;
           }
           .welcome-message {
               font-size: 18px;
               margin: 20px 0;
+              font-weight: 600;
           }
           .button {
               display: inline-block;
               padding: 12px 25px;
               margin: 20px 0;
-              background-color: #4CAF50;
+              background: linear-gradient(135deg, #0f766e, #2563eb);
               color: white;
               text-decoration: none;
-              border-radius: 5px;
+              border-radius: 8px;
               text-align: center;
               font-size: 16px;
               font-weight: bold;
-              transition: background-color 0.3s;
+              transition: transform 0.2s ease, opacity 0.2s ease;
           }
           .button:hover {
-              background-color: #45a049;
+              opacity: 0.95;
+              transform: translateY(-1px);
           }
           .footer {
-              background-color: #f4f4f4;
+              background-color: #f8fbff;
               padding: 15px;
               text-align: center;
-              color: #777;
+              color: #64748b;
               font-size: 12px;
-              border-top: 1px solid #ddd;
+              border-top: 1px solid #e2e8f0;
           }
           p {
               margin: 0 0 15px;
+          }
+          ul {
+              margin: 0 0 20px 20px;
+              padding: 0;
+          }
+          li {
+              margin-bottom: 10px;
           }
       </style>
   </head>
@@ -152,19 +162,19 @@ const welcomeEmailTemplate = (name) => `
           <div class="header">Welcome to HealthCompass!</div>
           <div class="content">
               <p class="welcome-message">Hello ${name},</p>
-              <p>We're thrilled to have you join HealthCompass! Your email has been successfully verified, and you're now ready to explore our agricultural monitoring platform.</p>
+              <p>We are excited to welcome you to HealthCompass. Your email is verified, and your personalized health journey starts now.</p>
               <p>Here's how you can get started:</p>
               <ul>
-                  <li>Set up your farm profile and monitoring preferences</li>
-                  <li>Explore our crop monitoring and disease detection features</li>
-                  <li>Connect with our community of farmers and agricultural experts</li>
-                  <li>Access real-time weather and soil condition data</li>
+                  <li>Complete your profile to tailor guidance to your needs</li>
+                  <li>Explore insights and tools to monitor your wellbeing</li>
+                  <li>Review practical recommendations for healthier daily habits</li>
+                  <li>Reach out to support whenever you need help</li>
               </ul>
-              <a href="#" class="button">Get Started with HealthCompass</a>
-              <p>If you need any help, don't hesitate to contact our support team. We're here to support you every step of the way.</p>
+              <a href="${process.env.FRONTEND_URL || '#'}" class="button">Open HealthCompass</a>
+              <p>Thank you for trusting HealthCompass. We are here to support you at every step.</p>
           </div>
           <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} HealthCompass. All rights reserved.</p>
+              <p>&copy; ${new Date().getFullYear()} HealthCompass. Better guidance, better health.</p>
           </div>
       </div>
   </body>
