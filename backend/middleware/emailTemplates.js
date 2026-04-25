@@ -170,7 +170,7 @@ const welcomeEmailTemplate = (name) => `
                   <li>Review practical recommendations for healthier daily habits</li>
                   <li>Reach out to support whenever you need help</li>
               </ul>
-              <a href="${process.env.FRONTEND_URL || '#'}" class="button">Open HealthCompass</a>
+              <a href="${process.env.FRONTEND_URL || 'https://health-compass-frontend.onrender.com'}" class="button">Open HealthCompass</a>
               <p>Thank you for trusting HealthCompass. We are here to support you at every step.</p>
           </div>
           <div class="footer">
