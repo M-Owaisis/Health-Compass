@@ -41,6 +41,10 @@ PORT=5000
 GEMINI_API_KEY=your_key_here
 JWT_SECRET=your_jwt_secret
 MONGO_URI=mongodb://localhost:27017/healthcompass
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_gmail_address@gmail.com
+EMAIL_PASS=your_gmail_app_password
 ```
 2. Install and run:
 ```bash
