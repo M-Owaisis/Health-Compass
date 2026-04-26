@@ -265,12 +265,31 @@ export default function Phase4FeedbackModal() {
     setFormData({ ...formData, [`sus${qIndex}`]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("=== PHASE 4A USER FEEDBACK ===", formData);
+    
+    setIsSubmitted(true); // Show success state immediately for perceived performance
+    
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/feedback/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to save feedback to server');
+      }
+    } catch (err) {
+      console.error('Error connecting to feedback API:', err);
+    }
+
     localStorage.setItem('phase4_feedback_submitted', 'true');
     localStorage.setItem('phase4_feedback_data', JSON.stringify(formData));
-    setIsSubmitted(true);
+    
     setTimeout(() => {
       setIsSubmitted(false); // reset for future
       handleClose();
