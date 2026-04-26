@@ -10,6 +10,11 @@ const feedbackSchema = new mongoose.Schema({
     enum: ['yes_easily', 'yes_struggled', 'no_gave_up', ''],
     default: ''
   },
+  testMode: {
+    type: String,
+    enum: ['standard', 'adaptive', 'both', ''],
+    default: ''
+  },
   resultSense: {
     type: String,
     default: ''

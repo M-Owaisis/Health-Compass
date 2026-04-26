@@ -215,7 +215,8 @@ export default function Phase4FeedbackModal() {
   
   const [formData, setFormData] = useState({
     hesitation: '',
-    completion: 'yes_easily',
+    completion: '',
+    testMode: '',
     resultSense: '',
     mostUseful: '',
     reuse: '',
@@ -347,9 +348,20 @@ export default function Phase4FeedbackModal() {
                     <div className="p4-group">
                       <label>2. Were you able to successfully finish a test?</label>
                       <select className="p4-select" name="completion" value={formData.completion} onChange={handleChange}>
+                        <option value="">-- Select --</option>
                         <option value="yes_easily">Yes, easily</option>
                         <option value="yes_struggled">Yes, but I struggled</option>
                         <option value="no_gave_up">No, I got stuck or gave up</option>
+                      </select>
+                    </div>
+
+                    <div className="p4-group">
+                      <label>3. Which testing mode did you use?</label>
+                      <select className="p4-select" name="testMode" value={formData.testMode} onChange={handleChange}>
+                        <option value="">-- Select --</option>
+                        <option value="standard">Standard Mode (all 30 questions)</option>
+                        <option value="adaptive">Adaptive Mode (GRE-style, one at a time)</option>
+                        <option value="both">I tried both</option>
                       </select>
                     </div>
 

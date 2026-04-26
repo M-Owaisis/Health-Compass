@@ -194,7 +194,8 @@ export default function AdminFeedback({ user, onLogout }) {
   let totalSusScore = 0;
   let susCount = 0;
   
-  let completionStats = { easy: 0, struggled: 0, gaveUp: 0 };
+  let completionStats = { easy: 0, struggled: 0, gaveUp: 0, unanswered: 0 };
+  let modeStats = { standard: 0, adaptive: 0, both: 0, unanswered: 0 };
   
   data.forEach(item => {
     // Process SUS
@@ -207,19 +208,29 @@ export default function AdminFeedback({ user, onLogout }) {
       }
     });
     if (answeredSus > 0) {
-      totalSusScore += (itemSusTotal / answeredSus); // average for this user
+      totalSusScore += (itemSusTotal / answeredSus);
       susCount++;
     }
 
-    // Process Completion
+    // Process Completion — only count if the user actually answered
     if (item.completion === 'yes_easily') completionStats.easy++;
     else if (item.completion === 'yes_struggled') completionStats.struggled++;
     else if (item.completion === 'no_gave_up') completionStats.gaveUp++;
+    else completionStats.unanswered++;
+
+    // Process Mode
+    if (item.testMode === 'standard') modeStats.standard++;
+    else if (item.testMode === 'adaptive') modeStats.adaptive++;
+    else if (item.testMode === 'both') modeStats.both++;
+    else modeStats.unanswered++;
   });
 
   const avgSus = susCount > 0 ? (totalSusScore / susCount).toFixed(1) : 0;
-  const completionRate = totalSubmissions > 0 
-    ? Math.round(((completionStats.easy + completionStats.struggled) / totalSubmissions) * 100) 
+  
+  // Only count users who actually answered the completion question
+  const answeredCompletion = completionStats.easy + completionStats.struggled + completionStats.gaveUp;
+  const completionRate = answeredCompletion > 0
+    ? Math.round(((completionStats.easy + completionStats.struggled) / answeredCompletion) * 100)
     : 0;
 
   // Chart Data
@@ -227,6 +238,12 @@ export default function AdminFeedback({ user, onLogout }) {
     { name: 'Easily Finished', value: completionStats.easy },
     { name: 'Finished with Struggle', value: completionStats.struggled },
     { name: 'Gave Up', value: completionStats.gaveUp },
+  ].filter(d => d.value > 0);
+
+  const modePieData = [
+    { name: 'Standard Mode', value: modeStats.standard },
+    { name: 'Adaptive Mode', value: modeStats.adaptive },
+    { name: 'Tried Both', value: modeStats.both },
   ].filter(d => d.value > 0);
 
   // Average per SUS question
@@ -248,6 +265,8 @@ export default function AdminFeedback({ user, onLogout }) {
     { name: 'Q4 (Need support)', avg: susQCounts[3] ? Number((susQ[3]/susQCounts[3]).toFixed(1)) : 0 },
     { name: 'Q5 (Well integrated)', avg: susQCounts[4] ? Number((susQ[4]/susQCounts[4]).toFixed(1)) : 0 },
   ];
+
+  const MODE_COLORS = ['#1C2B3A', '#4A7C6F', '#D4793A'];
 
   return (
     <div className="admin-dashboard">
@@ -293,7 +312,7 @@ export default function AdminFeedback({ user, onLogout }) {
               </div>
             </div>
 
-            {/* Charts */}
+            {/* Charts Row 1: Completion + SUS */}
             <div className="charts-grid">
               <div className="chart-card">
                 <h3 className="chart-title">Task Completion Breakdown</h3>
@@ -337,6 +356,56 @@ export default function AdminFeedback({ user, onLogout }) {
               </div>
             </div>
 
+            {/* Charts Row 2: Mode Preference */}
+            <div className="charts-grid">
+              <div className="chart-card">
+                <h3 className="chart-title">Testing Mode Preference</h3>
+                {modePieData.length === 0 ? (
+                  <p style={{ color: 'var(--slate)', textAlign: 'center', padding: '2rem 0' }}>No mode data collected yet. New submissions will appear here.</p>
+                ) : (
+                  <div style={{ height: 300 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={modePieData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={5}
+                          dataKey="value"
+                          label={({name, percent}) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                        >
+                          {modePieData.map((entry, index) => (
+                            <Cell key={`mode-cell-${index}`} fill={MODE_COLORS[index % MODE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+              <div className="chart-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem' }}>
+                <h3 className="chart-title" style={{ marginBottom: '0.5rem' }}>Mode Summary</h3>
+                {[
+                  { label: 'Standard Mode', val: modeStats.standard, color: '#1C2B3A' },
+                  { label: 'Adaptive Mode', val: modeStats.adaptive, color: '#4A7C6F' },
+                  { label: 'Tried Both', val: modeStats.both, color: '#D4793A' },
+                  { label: 'Not Answered', val: modeStats.unanswered, color: '#aaa' },
+                ].map(stat => (
+                  <div key={stat.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', borderRadius: '12px', background: 'var(--cream, #FAF7F2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ width: 12, height: 12, borderRadius: '50%', background: stat.color, flexShrink: 0, display: 'inline-block' }}></span>
+                      <span style={{ fontWeight: 500 }}>{stat.label}</span>
+                    </div>
+                    <span style={{ fontWeight: 700, fontSize: '1.2rem', color: stat.color }}>{stat.val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Detailed Table */}
             <div className="table-card">
               <h3 className="chart-title">Qualitative Insights</h3>
@@ -344,7 +413,8 @@ export default function AdminFeedback({ user, onLogout }) {
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Status</th>
+                    <th>Completion</th>
+                    <th>Mode Used</th>
                     <th>Hesitations</th>
                     <th>Result Sense</th>
                     <th>Most Useful</th>
@@ -358,13 +428,26 @@ export default function AdminFeedback({ user, onLogout }) {
                         {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}
                       </td>
                       <td>
-                        <span className={`status-badge ${
-                          item.completion === 'yes_easily' ? 'status-easy' : 
-                          item.completion === 'yes_struggled' ? 'status-struggled' : 'status-gaveup'
-                        }`}>
-                          {item.completion === 'yes_easily' ? 'Easy' : 
-                           item.completion === 'yes_struggled' ? 'Struggled' : 'Gave Up'}
-                        </span>
+                        {item.completion ? (
+                          <span className={`status-badge ${
+                            item.completion === 'yes_easily' ? 'status-easy' : 
+                            item.completion === 'yes_struggled' ? 'status-struggled' : 'status-gaveup'
+                          }`}>
+                            {item.completion === 'yes_easily' ? 'Easy' : 
+                             item.completion === 'yes_struggled' ? 'Struggled' : 'Gave Up'}
+                          </span>
+                        ) : <em style={{color: '#aaa'}}>N/A</em>}
+                      </td>
+                      <td>
+                        {item.testMode ? (
+                          <span className={`status-badge ${
+                            item.testMode === 'standard' ? 'status-easy' :
+                            item.testMode === 'adaptive' ? 'status-struggled' : 'status-gaveup'
+                          }`}>
+                            {item.testMode === 'standard' ? 'Standard' :
+                             item.testMode === 'adaptive' ? 'Adaptive' : 'Both'}
+                          </span>
+                        ) : <em style={{color: '#aaa'}}>N/A</em>}
                       </td>
                       <td>{item.hesitation || <em style={{color: '#aaa'}}>None</em>}</td>
                       <td>{item.resultSense || <em style={{color: '#aaa'}}>None</em>}</td>
