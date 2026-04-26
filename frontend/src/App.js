@@ -15,6 +15,7 @@ import Results from './pages/tests/Results';
 import ClinicalRiskAssessment from './pages/tests/ClinicalRiskAssessment';
 import History from './pages/History';
 import Subscription from './pages/Subscription';
+import AdminFeedback from './pages/AdminFeedback';
 import Phase4FeedbackModal from './components/Phase4FeedbackModal';
 
 function App() {
@@ -277,6 +278,18 @@ function App() {
           element={
             isAuthenticated ? (
               <Subscription user={user} onLogout={handleLogout} refreshUser={refreshUser} />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* Admin Route */}
+        <Route
+          path="/admin/feedback"
+          element={
+            isAuthenticated ? (
+              <AdminFeedback user={user} onLogout={handleLogout} />
             ) : (
               <Navigate to="/login" replace />
             )

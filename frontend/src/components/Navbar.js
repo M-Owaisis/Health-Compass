@@ -294,6 +294,7 @@ const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/history', label: 'History' },
   { to: '/pricing', label: 'Pricing' },
+  { to: '/admin/feedback', label: 'Admin Panel' },
 ];
 
 function Navbar({ user, onLogout }) {
