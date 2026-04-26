@@ -15,6 +15,7 @@ import Results from './pages/tests/Results';
 import ClinicalRiskAssessment from './pages/tests/ClinicalRiskAssessment';
 import History from './pages/History';
 import Subscription from './pages/Subscription';
+import Phase4FeedbackModal from './components/Phase4FeedbackModal';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -286,6 +287,9 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      
+      {/* Global Phase 4A Feedback Modal (visible on /tests routes) */}
+      <Phase4FeedbackModal />
     </div>
   );
 }
