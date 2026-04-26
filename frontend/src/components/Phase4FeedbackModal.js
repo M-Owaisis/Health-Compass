@@ -235,7 +235,7 @@ export default function Phase4FeedbackModal() {
   };
 
   const handleSusChange = (qIndex, value) => {
-    setFormData({ ...formData, [\`sus\${qIndex}\`]: value });
+    setFormData({ ...formData, [`sus${qIndex}`]: value });
   };
 
   const handleSubmit = (e) => {
@@ -381,7 +381,7 @@ export default function Phase4FeedbackModal() {
                                 <td key={val}>
                                   <input 
                                     type="radio" 
-                                    name={\`sus\${i+1}\`} 
+                                    name={`sus${i+1}`} 
                                     value={val} 
                                     required
                                     onChange={() => handleSusChange(i+1, val)}
