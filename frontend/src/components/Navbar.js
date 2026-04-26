@@ -328,13 +328,16 @@ function Navbar({ user, onLogout }) {
           {/* Nav links (desktop) */}
           <nav>
             <ul className="hc-nav-links">
-              {navLinks.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to} className={`hc-nav-link${isActive(link.to) ? ' active' : ''}`}>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              {navLinks.map((link) => {
+                if (link.to === '/admin/feedback' && user?.role !== 'admin') return null;
+                return (
+                  <li key={link.to}>
+                    <Link to={link.to} className={`hc-nav-link${isActive(link.to) ? ' active' : ''}`}>
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -380,17 +383,20 @@ function Navbar({ user, onLogout }) {
           </div>
 
           <ul className="hc-nav-drawer-links">
-            {navLinks.map((link) => (
-              <li key={link.to}>
-                <Link
-                  to={link.to}
-                  className={`hc-nav-drawer-link${isActive(link.to) ? ' active' : ''}`}
-                  onClick={() => setDrawerOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              if (link.to === '/admin/feedback' && user?.role !== 'admin') return null;
+              return (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className={`hc-nav-drawer-link${isActive(link.to) ? ' active' : ''}`}
+                    onClick={() => setDrawerOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="hc-nav-drawer-divider" />

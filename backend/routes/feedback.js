@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Feedback = require('../models/Feedback');
+const { protect, authorize } = require('../middleware/auth');
 
 // @route   POST /api/feedback/submit
 // @desc    Submit user feedback for Phase 4A
@@ -28,8 +29,8 @@ router.post('/submit', async (req, res) => {
 
 // @route   GET /api/feedback/all
 // @desc    Get all feedback entries
-// @access  Public (Can be restricted later)
-router.get('/all', async (req, res) => {
+// @access  Admin Only
+router.get('/all', protect, authorize('admin'), async (req, res) => {
   try {
     const feedbacks = await Feedback.find().sort({ createdAt: -1 });
     res.status(200).json({

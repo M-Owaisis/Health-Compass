@@ -160,8 +160,18 @@ export default function AdminFeedback({ user, onLogout }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/feedback/all`)
-      .then(res => res.json())
+    const token = localStorage.getItem('token');
+    fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/feedback/all`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.status === 403 || res.status === 401) {
+          throw new Error("Unauthorized");
+        }
+        return res.json();
+      })
       .then(resData => {
         if (resData.success) {
           setData(resData.data);
@@ -171,6 +181,10 @@ export default function AdminFeedback({ user, onLogout }) {
       .catch(err => {
         console.error("Failed to fetch feedback", err);
         setLoading(false);
+        if (err.message === "Unauthorized") {
+          alert("You do not have permission to view this page.");
+          window.location.href = "/dashboard";
+        }
       });
   }, []);
 

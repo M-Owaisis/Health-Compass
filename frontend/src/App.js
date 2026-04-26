@@ -288,10 +288,10 @@ function App() {
         <Route
           path="/admin/feedback"
           element={
-            isAuthenticated ? (
+            isAuthenticated && user?.role === 'admin' ? (
               <AdminFeedback user={user} onLogout={handleLogout} />
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/dashboard" replace />
             )
           }
         />
