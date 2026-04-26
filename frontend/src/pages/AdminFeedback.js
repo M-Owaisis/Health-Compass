@@ -189,15 +189,22 @@ export default function AdminFeedback({ user, onLogout }) {
   }, []);
 
   // Calculate KPIs
-  const totalSubmissions = data.length;
+  // Filter out legacy "Not Answered" data to show accurate current trends
+  const activeData = data.filter(item => 
+    item.testMode !== 'unknown' || 
+    item.completion !== '' || 
+    item.hesitation !== ''
+  );
+
+  const totalSubmissions = activeData.length;
   
   let totalSusScore = 0;
   let susCount = 0;
   
   let completionStats = { easy: 0, struggled: 0, gaveUp: 0 };
-  let modeStats = { standard: 0, adaptive: 0, unknown: 0 };
+  let modeStats = { standard: 0, adaptive: 0 };
   
-  data.forEach(item => {
+  activeData.forEach(item => {
     // Process SUS
     let itemSusTotal = 0;
     let answeredSus = 0;
@@ -208,24 +215,28 @@ export default function AdminFeedback({ user, onLogout }) {
       }
     });
     if (answeredSus > 0) {
-      totalSusScore += (itemSusTotal / answeredSus); // average for this user
+      totalSusScore += (itemSusTotal / answeredSus);
       susCount++;
     }
 
     // Process Completion
     if (item.completion === 'yes_easily') completionStats.easy++;
     else if (item.completion === 'yes_struggled') completionStats.struggled++;
-    else completionStats.gaveUp++; // Empty or 'no_gave_up' counts as not easily finished
+    else if (item.completion === 'no_gave_up') completionStats.gaveUp++;
+    // If it's empty, we don't count it as success OR failure for the % rate, 
+    // we just exclude it from the completion rate calculation to avoid skewing.
 
     // Process Mode
     if (item.testMode === 'adaptive') modeStats.adaptive++;
     else if (item.testMode === 'standard') modeStats.standard++;
-    else modeStats.unknown++;
   });
 
   const avgSus = susCount > 0 ? (totalSusScore / susCount).toFixed(1) : 0;
-  const completionRate = totalSubmissions > 0 
-    ? Math.round(((completionStats.easy + completionStats.struggled) / totalSubmissions) * 100) 
+  
+  // Real Completion Rate: Successes / Total who actually specified a status
+  const totalWithStatus = completionStats.easy + completionStats.struggled + completionStats.gaveUp;
+  const completionRate = totalWithStatus > 0 
+    ? Math.round(((completionStats.easy + completionStats.struggled) / totalWithStatus) * 100) 
     : 0;
 
   // Chart Data
