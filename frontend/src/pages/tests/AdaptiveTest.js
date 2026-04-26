@@ -662,7 +662,11 @@ function AdaptiveTest({ user, onLogout }) {
 
         {/* ── Action bar ── */}
         <div className="at-action-bar">
-          <button className="at-btn-exit" onClick={() => navigate('/dashboard')}>
+          <button className="at-btn-exit" onClick={() => {
+            if (window.confirm('Are you sure you want to exit the assessment? We would love your feedback before you go.')) {
+              window.dispatchEvent(new CustomEvent('open-phase4-feedback', { detail: { returnTo: '/dashboard' } }));
+            }
+          }}>
             <X size={15} /> Exit Test
           </button>
           <button

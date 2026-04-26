@@ -10,23 +10,30 @@ const FEEDBACK_STYLES = `
     z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--navy, #1C2B3A);
-    color: var(--cream, #FAF7F2);
-    padding: 12px 20px;
+    gap: 10px;
+    background: #D4793A;
+    color: #fff;
+    padding: 14px 24px;
     border-radius: 999px;
     font-family: var(--font-body, 'DM Sans', sans-serif);
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(28, 43, 58, 0.25);
+    box-shadow: 0 4px 20px rgba(212, 121, 58, 0.4);
     transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    animation: p4Pulse 2s infinite;
   }
   .p4-fab:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(28, 43, 58, 0.35);
-    background: #2D4055;
+    box-shadow: 0 8px 25px rgba(212, 121, 58, 0.5);
+    background: #C06A2F;
+  }
+  
+  @keyframes p4Pulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 121, 58, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(212, 121, 58, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 121, 58, 0); }
   }
   
   .p4-modal-overlay {
@@ -201,6 +208,7 @@ export default function Phase4FeedbackModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const location = useLocation();
+  const navigate = require('react-router-dom').useNavigate();
 
   // Show only on /tests/ routes
   const isTestRoute = location.pathname.startsWith('/tests');
@@ -222,11 +230,30 @@ export default function Phase4FeedbackModal() {
   useEffect(() => {
     // Auto popup on Results page if they haven't submitted yet
     if (location.pathname === '/tests/results' && !localStorage.getItem('phase4_feedback_submitted')) {
-      // Small delay so they can see results first
       const timer = setTimeout(() => setIsOpen(true), 1500);
       return () => clearTimeout(timer);
     }
   }, [location]);
+
+  useEffect(() => {
+    const handleOpenEvent = (e) => {
+      setIsOpen(true);
+      if (e.detail?.returnTo) {
+        localStorage.setItem('p4_returnTo', e.detail.returnTo);
+      }
+    };
+    window.addEventListener('open-phase4-feedback', handleOpenEvent);
+    return () => window.removeEventListener('open-phase4-feedback', handleOpenEvent);
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    const returnTo = localStorage.getItem('p4_returnTo');
+    if (returnTo) {
+      localStorage.removeItem('p4_returnTo');
+      navigate(returnTo);
+    }
+  };
 
   if (!isTestRoute) return null;
 
@@ -245,9 +272,9 @@ export default function Phase4FeedbackModal() {
     localStorage.setItem('phase4_feedback_data', JSON.stringify(formData));
     setIsSubmitted(true);
     setTimeout(() => {
-      setIsOpen(false);
       setIsSubmitted(false); // reset for future
-    }, 3000);
+      handleClose();
+    }, 2000);
   };
 
   return (
@@ -271,7 +298,7 @@ export default function Phase4FeedbackModal() {
                 <h2 className="p4-title">User Feedback</h2>
                 <div className="p4-subtitle">Phase 4A Course Project Validation</div>
               </div>
-              <button className="p4-close" onClick={() => setIsOpen(false)}>
+              <button className="p4-close" onClick={handleClose}>
                 <X size={20} />
               </button>
             </div>
@@ -292,7 +319,6 @@ export default function Phase4FeedbackModal() {
                       <textarea 
                         className="p4-textarea" 
                         name="hesitation" 
-                        required
                         placeholder="e.g. I didn't know what to click on the memory test..."
                         value={formData.hesitation} 
                         onChange={handleChange} 
@@ -313,7 +339,6 @@ export default function Phase4FeedbackModal() {
                       <textarea 
                         className="p4-textarea" 
                         name="resultSense" 
-                        required
                         placeholder="Did you understand what 15/30 means?"
                         value={formData.resultSense} 
                         onChange={handleChange} 
@@ -325,7 +350,6 @@ export default function Phase4FeedbackModal() {
                       <textarea 
                         className="p4-textarea" 
                         name="mostUseful" 
-                        required
                         value={formData.mostUseful} 
                         onChange={handleChange} 
                       />
@@ -336,7 +360,6 @@ export default function Phase4FeedbackModal() {
                       <textarea 
                         className="p4-textarea" 
                         name="reuse" 
-                        required
                         value={formData.reuse} 
                         onChange={handleChange} 
                       />
@@ -347,7 +370,6 @@ export default function Phase4FeedbackModal() {
                       <textarea 
                         className="p4-textarea" 
                         name="pay" 
-                        required
                         placeholder="Yes/No and why..."
                         value={formData.pay} 
                         onChange={handleChange} 
@@ -383,7 +405,6 @@ export default function Phase4FeedbackModal() {
                                     type="radio" 
                                     name={`sus${i+1}`} 
                                     value={val} 
-                                    required
                                     onChange={() => handleSusChange(i+1, val)}
                                   />
                                 </td>

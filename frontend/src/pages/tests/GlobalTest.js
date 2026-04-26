@@ -146,7 +146,11 @@ function GlobalTest({ user, onLogout }) {
 
             <div className="tp-actions">
               <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
-                <button className="tp-btn-secondary" onClick={() => navigate('/dashboard')}>
+                <button className="tp-btn-secondary" onClick={() => {
+                  if (window.confirm('Are you sure you want to exit the assessment? We would love your feedback before you go.')) {
+                    window.dispatchEvent(new CustomEvent('open-phase4-feedback', { detail: { returnTo: '/dashboard' } }));
+                  }
+                }}>
                   <ArrowLeft size={16} /> Back
                 </button>
                 <button
