@@ -216,7 +216,6 @@ export default function Phase4FeedbackModal() {
   const [formData, setFormData] = useState({
     hesitation: '',
     completion: '',
-    testMode: '',
     resultSense: '',
     mostUseful: '',
     reuse: '',
@@ -272,13 +271,18 @@ export default function Phase4FeedbackModal() {
     
     setIsSubmitted(true); // Show success state immediately for perceived performance
     
+    // Detect test mode from URL
+    const isAdaptive = location.pathname.includes('adaptive');
+    const isStandard = location.pathname.includes('test') && !isAdaptive;
+    const testMode = isAdaptive ? 'adaptive' : (isStandard ? 'standard' : 'unknown');
+
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/feedback/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, testMode }),
       });
       
       if (!response.ok) {
@@ -348,20 +352,10 @@ export default function Phase4FeedbackModal() {
                     <div className="p4-group">
                       <label>2. Were you able to successfully finish a test?</label>
                       <select className="p4-select" name="completion" value={formData.completion} onChange={handleChange}>
-                        <option value="">-- Select --</option>
+                        <option value="">-- Select Status --</option>
                         <option value="yes_easily">Yes, easily</option>
                         <option value="yes_struggled">Yes, but I struggled</option>
                         <option value="no_gave_up">No, I got stuck or gave up</option>
-                      </select>
-                    </div>
-
-                    <div className="p4-group">
-                      <label>3. Which testing mode did you use?</label>
-                      <select className="p4-select" name="testMode" value={formData.testMode} onChange={handleChange}>
-                        <option value="">-- Select --</option>
-                        <option value="standard">Standard Mode (all 30 questions)</option>
-                        <option value="adaptive">Adaptive Mode (GRE-style, one at a time)</option>
-                        <option value="both">I tried both</option>
                       </select>
                     </div>
 

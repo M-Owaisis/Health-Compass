@@ -10,11 +10,6 @@ const feedbackSchema = new mongoose.Schema({
     enum: ['yes_easily', 'yes_struggled', 'no_gave_up', ''],
     default: ''
   },
-  testMode: {
-    type: String,
-    enum: ['standard', 'adaptive', 'both', ''],
-    default: ''
-  },
   resultSense: {
     type: String,
     default: ''
@@ -36,6 +31,11 @@ const feedbackSchema = new mongoose.Schema({
   sus3: { type: String, default: null },
   sus4: { type: String, default: null },
   sus5: { type: String, default: null },
+  testMode: {
+    type: String,
+    enum: ['standard', 'adaptive', 'unknown'],
+    default: 'unknown'
+  },
   createdAt: {
     type: Date,
     default: Date.now
